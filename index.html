@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DormDoc</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Poppins',sans-serif;background:#f0f4f0;color:#222}
+nav{background:#2d5a27;color:#fff;padding:14px 24px;display:flex;align-items:center;gap:20px;position:sticky;top:0;z-index:99}
+nav h1{font-size:1.3rem;font-weight:700}nav h1 span{color:#a8d5a2}
+nav a{color:#a8d5a2;text-decoration:none;font-size:.82rem;font-weight:600}
+nav a:hover{color:#fff}
+.hero{background:linear-gradient(135deg,#2d5a27,#4a8c42);color:#fff;text-align:center;padding:48px 20px}
+.hero h2{font-size:2rem;margin-bottom:8px}.hero p{opacity:.8;font-size:.95rem}
+.pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.pill{background:rgba(255,255,255,.15);padding:6px 16px;border-radius:99px;font-size:.78rem}
+main{max-width:900px;margin:0 auto;padding:24px 16px;display:flex;flex-direction:column;gap:24px}
+.card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.card h3{font-size:1.1rem;font-weight:700;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{font-size:.78rem;font-weight:600;display:block;margin-bottom:4px;color:#555}
+select,input{width:100%;padding:9px 12px;border:1.5px solid #ddd;border-radius:8px;font-size:.85rem;font-family:inherit;outline:none;background:#fafafa}
+select:focus,input:focus{border-color:#2d5a27}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{padding:5px 12px;border-radius:99px;border:1.5px solid #ccc;font-size:.75rem;cursor:pointer;background:#fff;transition:.2s}
+.chip.on{background:#2d5a27;border-color:#2d5a27;color:#fff}
+.btn{display:inline-flex;align-items:center;padding:10px 22px;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;margin-top:12px;color:#fff}
+.g{background:#2d5a27}.o{background:#c47d20}.b{background:#2a7a9a}.r{background:#b03030}
+.out{display:none;margin-top:16px;padding:16px;border-radius:10px;font-size:.85rem;line-height:1.8}
+.out.show{display:block;animation:fadeIn .3s ease}
+.out-g{background:#e8f5e3;border-left:4px solid #2d5a27}
+.out-o{background:#fdf3e3;border-left:4px solid #c47d20}
+.out-b{background:#e3f2f8;border-left:4px solid #2a7a9a}
+.out-r{background:#fde8e8;border-left:4px solid #b03030}
+.out h4{margin-bottom:8px;font-size:.95rem}
+.warn{background:#fff3cd;border-radius:6px;padding:8px 12px;font-size:.78rem;margin-top:8px}
+footer{text-align:center;padding:20px;font-size:.78rem;color:#888}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <h1>Dorm<span>Doc</span></h1>
+  <a href="#meal">🥗 Meal</a>
+  <a href="#kitchen">🌿 Kitchen</a>
+  <a href="#skin">✨ Skin</a>
+  <a href="#medical">🩺 Medical</a>
+</nav>
+
+<div class="hero">
+  <h2>Your Campus Health Buddy</h2>
+  <p>Nutrition · Home Remedies · Skincare · Medical Guidance</p>
+  <div class="pills">
+    <span class="pill">🥗 Meal Generator</span>
+    <span class="pill">🌿 Kitchen Chemistry</span>
+    <span class="pill">✨ Skin Tracker</span>
+    <span class="pill">🩺 Medical Trigger</span>
+  </div>
+</div>
+
+<main>
+
+<!-- 1. MEAL -->
+<div class="card" id="meal">
+  <h3>🥗 Meal Generator</h3>
+  <div class="grid">
+    <div><label>Goal</label>
+      <select id="mg"><option value="">Select…</option><option value="wl">Weight Loss</option><option value="mu">Muscle Growth</option><option value="cn">Complete Nutrition</option><option value="en">Energy Boost</option></select></div>
+    <div><label>Diet</label>
+      <select id="md"><option value="veg">Vegetarian</option><option value="vgn">Vegan</option><option value="nv">Non-Veg</option></select></div>
+    <div><label>Weight (kg)</label><input type="number" id="mw" placeholder="e.g. 65"/></div>
+    <div><label>Activity</label>
+      <select id="ma"><option value="low">Low</option><option value="mod">Moderate</option><option value="high">High</option></select></div>
+  </div>
+  <button class="btn g" onclick="doMeal()">Generate Plan</button>
+  <div class="out out-g" id="meal-out"></div>
+</div>
+
+<!-- 2. KITCHEN -->
+<div class="card" id="kitchen">
+  <h3>🌿 Kitchen Chemistry</h3>
+  <div class="grid">
+    <div><label>Skin Concern</label>
+      <select id="kc"><option value="">Select…</option><option value="tan">Sun Tan</option><option value="dark">Dark Spots</option><option value="glow">Glow & Smooth</option><option value="acne">Acne</option><option value="dry">Dry Skin</option><option value="eye">Dark Circles</option></select></div>
+    <div><label>Skin Type</label>
+      <select id="ks"><option value="normal">Normal</option><option value="oily">Oily</option><option value="dry">Dry</option><option value="sensitive">Sensitive</option></select></div>
+  </div>
+  <button class="btn o" onclick="doKitchen()">Find Remedy</button>
+  <div class="out out-o" id="kitchen-out"></div>
+</div>
+
+<!-- 3. SKIN -->
+<div class="card" id="skin">
+  <h3>✨ Skin Tracker</h3>
+  <label>Skin Type</label>
+  <div class="chips" id="st">
+    <div class="chip" onclick="solo(this,'st')">Normal</div><div class="chip" onclick="solo(this,'st')">Oily</div><div class="chip" onclick="solo(this,'st')">Dry</div><div class="chip" onclick="solo(this,'st')">Combination</div><div class="chip" onclick="solo(this,'st')">Sensitive</div>
+  </div>
+  <label>Conditions (multi)</label>
+  <div class="chips" id="sc">
+    <div class="chip" onclick="toggle(this)">Acne</div><div class="chip" onclick="toggle(this)">Redness</div><div class="chip" onclick="toggle(this)">Dark Spots</div><div class="chip" onclick="toggle(this)">Dullness</div><div class="chip" onclick="toggle(this)">Dryness</div><div class="chip" onclick="toggle(this)">Fine Lines</div>
+  </div>
+  <button class="btn b" onclick="doSkin()">Get Routine</button>
+  <div class="out out-b" id="skin-out"></div>
+</div>
+
+<!-- 4. MEDICAL -->
+<div class="card" id="medical">
+  <h3>🩺 Medical Trigger</h3>
+  <label>Symptoms (multi)</label>
+  <div class="chips" id="ms">
+    <div class="chip" onclick="toggle(this)">Fever</div><div class="chip" onclick="toggle(this)">Headache</div><div class="chip" onclick="toggle(this)">Chest Pain</div><div class="chip" onclick="toggle(this)">Breathlessness</div><div class="chip" onclick="toggle(this)">Nausea</div><div class="chip" onclick="toggle(this)">Fatigue</div><div class="chip" onclick="toggle(this)">Rash</div><div class="chip" onclick="toggle(this)">Dizziness</div>
+  </div>
+  <div class="grid">
+    <div><label>Duration</label>
+      <select id="md2"><option value="1">Few hours</option><option value="2">1–2 days</option><option value="3">3–7 days</option><option value="4">1–2 weeks</option><option value="5">Over 2 weeks</option></select></div>
+    <div><label>Severity: <span id="sv">5</span>/10</label>
+      <input type="range" min="1" max="10" value="5" oninput="document.getElementById('sv').textContent=this.value" id="sev" style="margin-top:12px;accent-color:#b03030;padding:0"/></div>
+  </div>
+  <button class="btn r" onclick="doMedical()">Analyse</button>
+  <div class="out out-r" id="med-out"></div>
+</div>
+
+</main>
+<footer>⚠️ DormDoc is a wellness guide — not a substitute for professional medical advice.</footer>
+
+<script>
+function solo(el,id){document.querySelectorAll('#'+id+' .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+function toggle(el){el.classList.toggle('on')}
+function picked(id){return[...document.querySelectorAll('#'+id+' .chip.on')].map(c=>c.textContent)}
+function show(id,html){const e=document.getElementById(id);e.innerHTML=html;e.classList.add('show')}
+
+const meals={
+  wl:{cal:-300,plan:'Oats+fruit · Dal+brown rice+salad · Grilled veg/protein+soup'},
+  mu:{cal:400,plan:'Eggs/paneer+oats+banana · Rice+protein+greens · Soya+sweet potato'},
+  cn:{cal:0,plan:'Toast+milk+fruit · Dal+roti+sabzi+curd · Khichdi+vegetables'},
+  en:{cal:200,plan:'Banana smoothie+PB toast · Millets+legumes · Dates+nuts · Rice+curry'}
+};
+function doMeal(){
+  const g=document.getElementById('mg').value;
+  if(!g)return alert('Pick a goal!');
+  const base={low:1600,mod:1900,high:2300}[document.getElementById('ma').value];
+  const cal=base+meals[g].cal;
+  const diet={veg:'Vegetarian',vgn:'Vegan (replace dairy)',nv:'Non-Veg'}[document.getElementById('md').value];
+  show('meal-out',`<h4>🎯 ~${cal} kcal/day · ${diet}</h4><p>${meals[g].plan}</p><div class="warn">💧 8+ glasses of water · 7–8 hrs sleep · Stay consistent!</div>`);
+}
+
+const kits={
+  tan:{n:'De-Tan Mask',m:'Raw milk + lemon + turmeric',u:'Apply 15 min, rinse with cool water. 3×/week.',t:'Always wear sunscreen after!'},
+  dark:{n:'Dark Spot Fix',m:'Potato juice + aloe vera + lemon drops',u:'Dab on spots 20 min, rinse.',t:'Consistent use for 4–6 weeks.'},
+  glow:{n:'Glow Scrub',m:'Oat flour + honey + curd',u:'Massage gently, leave 10 min, rinse.',t:'Use 2×/week.'},
+  acne:{n:'Anti-Acne Paste',m:'Neem powder + turmeric + aloe gel',u:'Apply on acne 30 min, rinse.',t:'Patch test first!'},
+  dry:{n:'Moisture Mask',m:'Mashed banana + honey + coconut oil',u:'Apply 20 min, rinse warm.',t:'3×/week for dry skin.'},
+  eye:{n:'Eye Treatment',m:'Cold potato juice + almond oil',u:'Cotton pads under eyes 15 min, leave oil overnight.',t:'Cold compress helps more.'}
+};
+function doKitchen(){
+  const c=document.getElementById('kc').value;
+  if(!c)return alert('Pick a concern!');
+  const r=kits[c];
+  const note=document.getElementById('ks').value==='sensitive'?'<div class="warn">⚠️ Sensitive skin: skip lemon, use rose water instead.</div>':'';
+  show('kitchen-out',`<h4>🌿 ${r.n}</h4><p><b>Mix:</b> ${r.m}</p><p><b>Use:</b> ${r.u}</p><p>💡 ${r.t}</p>${note}`);
+}
+
+const routines={
+  Normal:{am:'Gentle cleanser → moisturiser → SPF 30',pm:'Cleanser → niacinamide → night cream'},
+  Oily:{am:'Salicylic cleanser → oil-free moisturiser → matte SPF',pm:'Double cleanse → BHA toner → gel moisturiser'},
+  Dry:{am:'Cream cleanser → hyaluronic acid → rich moisturiser → SPF',pm:'Oil cleanse → ceramide serum → night cream'},
+  Combination:{am:'Gentle cleanser → niacinamide → light moisturiser → SPF',pm:'Double cleanse → toner → zone moisturiser'},
+  Sensitive:{am:'Fragrance-free cleanser → cica serum → barrier cream → mineral SPF',pm:'Milk cleanser → aloe gel → ceramide cream'}
+};
+const extras={Acne:'+ Benzoyl peroxide spot treatment',Redness:'+ Azelaic acid, avoid hot water','Dark Spots':'+ Vit C serum (AM) + SPF daily',Dullness:'+ AHA exfoliant 1–2×/week',Dryness:'+ Squalane oil (PM)','Fine Lines':'+ Retinol 2×/week (PM)'};
+function doSkin(){
+  const t=picked('st')[0]||'Normal';
+  const r=routines[t];
+  const add=picked('sc').map(c=>extras[c]).filter(Boolean).join(' · ');
+  show('skin-out',`<h4>✨ ${t} Skin Routine</h4><p>☀️ <b>AM:</b> ${r.am}</p><p>🌙 <b>PM:</b> ${r.pm}</p>${add?`<p style="margin-top:6px">🎯 <b>Add-ons:</b> ${add}</p>`:''}`);
+}
+
+function doMedical(){
+  const syms=picked('ms');
+  const dur=parseInt(document.getElementById('md2').value);
+  const sev=parseInt(document.getElementById('sev').value);
+  let score=syms.length*8+dur*6+sev*4;
+  if(syms.includes('Chest Pain')||syms.includes('Breathlessness'))score+=30;
+  score=Math.min(score,100);
+  const [msg,col]=score>=70?['🚨 See a Doctor Today — visit a clinic or ER promptly.','#c0392b']:
+    score>=40?['⚠️ Doctor Visit Recommended within 24–48 hrs.','#c47d20']:
+    score>=20?['👁️ Monitor 48 hours — rest, hydrate, watch for worsening.','#2d5a27']:
+    ['✅ Self-care is fine — rest, fluids, basic OTC remedies.','#2a7a9a'];
+  show('med-out',`<p style="color:${col};font-weight:600">${msg}</p><p style="font-size:.8rem;margin-top:4px">Score: ${score}/100 · ${syms.length} symptom(s) · Severity ${sev}/10</p><div class="warn">Guide only — not a medical diagnosis.</div>`);
+}
+</script>
+</body>
+</html>
