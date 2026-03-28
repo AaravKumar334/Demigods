@@ -1,182 +1,802 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>DormDoc</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dorm Doc</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e2a;
+    --border: rgba(255,255,255,0.07);
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --meal: #f97316;
+    --meal-soft: rgba(249,115,22,0.12);
+    --kitchen: #10b981;
+    --kitchen-soft: rgba(16,185,129,0.12);
+    --skin: #e879f9;
+    --skin-soft: rgba(232,121,249,0.12);
+    --medical: #38bdf8;
+    --medical-soft: rgba(56,189,248,0.12);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ---- NAV ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(13,15,20,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.4rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--meal); box-shadow: 0 0 14px var(--meal); }
+  .nav-pills {
+    display: flex; gap: 6px;
+  }
+  .nav-pill {
+    padding: 6px 16px; border-radius: 50px; border: none; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 500;
+    background: transparent; color: var(--muted);
+    transition: all 0.2s;
+  }
+  .nav-pill:hover, .nav-pill.active { background: var(--surface2); color: var(--text); }
+  .nav-pill[data-section="meal"].active { color: var(--meal); }
+  .nav-pill[data-section="kitchen"].active { color: var(--kitchen); }
+  .nav-pill[data-section="skin"].active { color: var(--skin); }
+  .nav-pill[data-section="medical"].active { color: var(--medical); }
+
+  /* ---- HERO ---- */
+  #hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 50%, rgba(249,115,22,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 80% 30%, rgba(56,189,248,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 60% at 60% 80%, rgba(232,121,249,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 40% at 30% 20%, rgba(16,185,129,0.06) 0%, transparent 60%);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 720px; }
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 18px; border-radius: 50px;
+    border: 1px solid var(--border);
+    font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 2rem;
+    background: var(--surface);
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 800; line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--meal), var(--skin), var(--medical), var(--kitchen));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: 1.1rem; color: var(--muted); line-height: 1.7;
+    margin-bottom: 3rem; font-weight: 300;
+  }
+  .hero-cards {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+  }
+  .hero-card-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 22px; border-radius: 12px; border: 1px solid var(--border);
+    background: var(--surface); cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+    color: var(--text); transition: all 0.25s;
+    text-decoration: none;
+  }
+  .hero-card-btn:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.15); }
+  .hero-card-btn .icon { font-size: 1.1rem; }
+  .hero-card-btn[data-target="meal"] .icon { filter: drop-shadow(0 0 6px var(--meal)); }
+  .hero-card-btn[data-target="kitchen"] .icon { filter: drop-shadow(0 0 6px var(--kitchen)); }
+  .hero-card-btn[data-target="skin"] .icon { filter: drop-shadow(0 0 6px var(--skin)); }
+  .hero-card-btn[data-target="medical"] .icon { filter: drop-shadow(0 0 6px var(--medical)); }
+
+  /* ---- SECTIONS ---- */
+  .section {
+    display: none; min-height: 100vh;
+    padding: 80px 2rem 4rem;
+    max-width: 900px; margin: 0 auto;
+  }
+  .section.active { display: block; }
+
+  .section-header {
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-label {
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    margin-bottom: 0.6rem; font-weight: 500;
+  }
+  .section-label.meal { color: var(--meal); }
+  .section-label.kitchen { color: var(--kitchen); }
+  .section-label.skin { color: var(--skin); }
+  .section-label.medical { color: var(--medical); }
+
+  .section-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800; letter-spacing: -0.02em;
+  }
+  .section-header p {
+    color: var(--muted); margin-top: 0.5rem; font-size: 0.95rem; line-height: 1.6;
+  }
+
+  /* ---- CARD ---- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.8rem;
+    margin-bottom: 1.2rem;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem; font-weight: 700;
+    margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ---- FORM ELEMENTS ---- */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group label { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+  .form-group input, .form-group select, .form-group textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-group textarea { min-height: 90px; resize: vertical; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    border-color: rgba(255,255,255,0.2);
+  }
+  select option { background: #1a1e2a; }
+  .form-full { grid-column: 1 / -1; }
+
+  /* ---- BUTTONS ---- */
+  .btn {
+    padding: 12px 28px; border-radius: 10px; border: none;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem; font-weight: 600;
+    transition: all 0.2s; margin-top: 1rem;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-meal { background: var(--meal); color: #fff; }
+  .btn-meal:hover { background: #ea6c05; transform: translateY(-1px); }
+  .btn-kitchen { background: var(--kitchen); color: #fff; }
+  .btn-kitchen:hover { background: #059669; transform: translateY(-1px); }
+  .btn-skin { background: var(--skin); color: #fff; }
+  .btn-skin:hover { background: #d046ef; transform: translateY(-1px); }
+  .btn-medical { background: var(--medical); color: #0d0f14; }
+  .btn-medical:hover { background: #29b0ea; transform: translateY(-1px); }
+
+  /* ---- RESPONSE BOX ---- */
+  .response-box {
+    display: none;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 1.8rem;
+    margin-top: 1.2rem;
+    border: 1px solid var(--border);
+    line-height: 1.75;
+    font-size: 0.92rem;
+    white-space: pre-wrap;
+    position: relative;
+    overflow: hidden;
+  }
+  .response-box.visible { display: block; }
+  .response-box::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    border-radius: 3px 3px 0 0;
+  }
+  #meal-response::before { background: var(--meal); }
+  #kitchen-response::before { background: var(--kitchen); }
+  #skin-response::before { background: var(--skin); }
+  #medical-response::before { background: var(--medical); }
+
+  .response-label {
+    font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+    font-weight: 600; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .response-label .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot-meal { background: var(--meal); box-shadow: 0 0 8px var(--meal); }
+  .dot-kitchen { background: var(--kitchen); box-shadow: 0 0 8px var(--kitchen); }
+  .dot-skin { background: var(--skin); box-shadow: 0 0 8px var(--skin); }
+  .dot-medical { background: var(--medical); box-shadow: 0 0 8px var(--medical); }
+
+  .loading-dots { display: inline-flex; gap: 4px; align-items: center; }
+  .loading-dots span {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--muted);
+    animation: bounce 1.2s infinite;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100% { transform: scale(0.7); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
+
+  /* ---- TAGS ---- */
+  .tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .tag {
+    padding: 5px 14px; border-radius: 50px;
+    border: 1px solid var(--border); background: var(--surface2);
+    font-size: 0.8rem; cursor: pointer; transition: all 0.2s; color: var(--muted);
+    user-select: none;
+  }
+  .tag:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+  .tag.selected-meal { background: var(--meal-soft); border-color: var(--meal); color: var(--meal); }
+  .tag.selected-kitchen { background: var(--kitchen-soft); border-color: var(--kitchen); color: var(--kitchen); }
+  .tag.selected-skin { background: var(--skin-soft); border-color: var(--skin); color: var(--skin); }
+  .tag.selected-medical { background: var(--medical-soft); border-color: var(--medical); color: var(--medical); }
+
+  /* ---- DISCLAIMER ---- */
+  .disclaimer {
+    background: rgba(248,113,113,0.06);
+    border: 1px solid rgba(248,113,113,0.2);
+    border-radius: 10px; padding: 1rem 1.2rem;
+    font-size: 0.82rem; color: #f87171; line-height: 1.6;
+    margin-top: 1.2rem;
+  }
+
+  /* ---- ANIMATIONS ---- */
+  .section { animation: fadeUp 0.4s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .nav-pills { display: none; }
+    .hero-cards { flex-direction: column; align-items: center; }
+    nav { padding: 0 1rem; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: #2a2e3a; border-radius: 5px; }
+</style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav>
-  <h1>
-    Dorm
-    <span>Doc</span>
-  </h1>
-  <a href="#meal"> Meal</a>
-  <a href="#kitchen"> Kitchen</a>
-  <a href="#skin"> Skin</a>
-  <a href="#medical"> Medical</a>
+  <div class="logo">
+    <div class="logo-dot"></div>
+    Dorm Doc
+  </div>
+  <div class="nav-pills">
+    <button class="nav-pill" data-section="home" onclick="showSection('home')">Home</button>
+    <button class="nav-pill" data-section="meal" onclick="showSection('meal')">🍽 Meal Generator</button>
+    <button class="nav-pill" data-section="kitchen" onclick="showSection('kitchen')">🧪 Kitchen Chemistry</button>
+    <button class="nav-pill" data-section="skin" onclick="showSection('skin')">✨ Skin Tracker</button>
+    <button class="nav-pill" data-section="medical" onclick="showSection('medical')">🩺 Medical Trigger</button>
+  </div>
 </nav>
 
-<div class="hero">
-  <h2>Your Campus Health Buddy</h2>
-  <p>Nutrition · Home Remedies · Skincare · Medical Guidance</p>
-  <div class="pill">
-    <span class="pill"> Meal Generator</span>
-    <span class="pill"> Kitchen Chemistry</span>
-    <span class="pill"> Skin Tracker</span>
-    <span class="pill"> Medical Trigger</span>
-
-  </div>
-
-</div>
-
-<main>
-
-/* meal */
-<div class="card" id="meal">
-  <h3> Meal Generator</h3>
-  <div class="grid">
-    <div>
-      <label>Goal</label>
-      <select id="mg">
-        <option value="">Select…</option>
-        <option value="wl">Weight Loss</option>
-        <option value="mu">Muscle Growth</option>
-        <option value="cn">Complete Nutrition</option>
-        <option value="en">Energy Boost</option>
-      </select>
+<!-- HERO -->
+<div id="hero" class="section active">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Your Dorm-Side Wellness Companion</div>
+    <div class="hero">
+      <h1>Dorm <span>Doc</span></h1>
     </div>
-
-    <div>
-      <label>Diet</label>
-      <select id="md">
-        <option value="veg">Vegetarian</option>
-        <option value="vgn">Vegan</option>
-        <option value="nv">Non-Veg</option>
-      </select>
+    <p>Four AI-powered tools for every student's health need — from what you eat to how your skin feels. No appointment needed.</p>
+    <div class="hero-cards">
+      <a class="hero-card-btn" data-target="meal" onclick="showSection('meal')">
+        <span class="icon">🍽️</span> Meal Generator
+      </a>
+      <a class="hero-card-btn" data-target="kitchen" onclick="showSection('kitchen')">
+        <span class="icon">🧪</span> Kitchen Chemistry
+      </a>
+      <a class="hero-card-btn" data-target="skin" onclick="showSection('skin')">
+        <span class="icon">✨</span> Skin Tracker
+      </a>
+      <a class="hero-card-btn" data-target="medical" onclick="showSection('medical')">
+        <span class="icon">🩺</span> Medical Trigger
+      </a>
     </div>
-
-    <div>
-      <label>Weight (kg)</label>
-      <input type="number" id="mw" placeholder="e.g. 65"/>
-    </div>
-
-    <div>
-      <label>Activity</label>
-      <select id="ma">
-        <option value="low">Low</option>
-        <option value="mod">Moderate</option>
-        <option value="high">High</option>
-      </select>
-    </div>
-
-  </div>
-  <button class="btn g" onclick="doMeal()">Generate Plan</button>
-  <div class="out out-g" id="meal-out">
   </div>
 </div>
 
-/* kitchen */
-
-<div class="card" id="kitchen">
-  <h3>🌿 Kitchen Chemistry</h3>
-  <div class="grid">
-    <div>
-      <label>Skin Concern</label>
-      <select id="kc">
-        <option value="">Select…</option>
-        <option value="tan">Sun Tan</option>
-        <option value="dark">Dark Spots</option>
-        <option value="glow">Glow & Smooth</option>
-        <option value="acne">Acne</option>
-        <option value="dry">Dry Skin</option>
-        <option value="eye">Dark Circles</option>
-      </select>
-    </div>
-
-    <div>
-      <label>Skin Type</label>
-      <select id="ks">
-        <option value="normal">Normal</option>
-        <option value="oily">Oily</option>
-        <option value="dry">Dry</option>
-        <option value="sensitive">Sensitive</option>
-      </select>
-    </div>
-
+<!-- MEAL GENERATOR -->
+<div id="meal" class="section">
+  <div class="section-header">
+    <div class="section-label meal">01 — Nutrition</div>
+    <h2>Meal Generator 🍽️</h2>
+    <p>Get a personalized diet plan tailored to your body goals — whether it's weight loss, gain, or building muscle.</p>
   </div>
-  <button class="btn o" onclick="doKitchen()">Find Remedy</button>
-  <div class="out out-o" id="kitchen-out"></div>
+
+  <div class="card">
+    <div class="card-title">🧬 Your Body Profile</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Age</label>
+        <input type="number" id="meal-age" placeholder="e.g. 20" min="10" max="100">
+      </div>
+      <div class="form-group">
+        <label>Gender</label>
+        <select id="meal-gender">
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Current Weight (kg)</label>
+        <input type="number" id="meal-weight" placeholder="e.g. 70">
+      </div>
+      <div class="form-group">
+        <label>Height (cm)</label>
+        <input type="number" id="meal-height" placeholder="e.g. 170">
+      </div>
+      <div class="form-group form-full">
+        <label>Primary Goal</label>
+        <div class="tag-group" id="meal-goal-tags">
+          <span class="tag" onclick="selectTag(this,'meal-goal','selected-meal')">⬇️ Weight Loss</span>
+          <span class="tag" onclick="selectTag(this,'meal-goal','selected-meal')">⬆️ Weight Gain</span>
+          <span class="tag" onclick="selectTag(this,'meal-goal','selected-meal')">💪 Muscle Growth</span>
+          <span class="tag" onclick="selectTag(this,'meal-goal','selected-meal')">🧘 Maintain Weight</span>
+          <span class="tag" onclick="selectTag(this,'meal-goal','selected-meal')">⚡ Boost Energy</span>
+        </div>
+        <input type="hidden" id="meal-goal">
+      </div>
+      <div class="form-group form-full">
+        <label>Activity Level</label>
+        <div class="tag-group">
+          <span class="tag" onclick="selectTag(this,'meal-activity','selected-meal')">🛋️ Sedentary</span>
+          <span class="tag" onclick="selectTag(this,'meal-activity','selected-meal')">🚶 Lightly Active</span>
+          <span class="tag" onclick="selectTag(this,'meal-activity','selected-meal')">🏃 Moderately Active</span>
+          <span class="tag" onclick="selectTag(this,'meal-activity','selected-meal')">🏋️ Very Active</span>
+        </div>
+        <input type="hidden" id="meal-activity">
+      </div>
+      <div class="form-group form-full">
+        <label>Dietary Restrictions (optional)</label>
+        <input type="text" id="meal-restrictions" placeholder="e.g. vegetarian, no dairy, gluten-free">
+      </div>
+    </div>
+    <button class="btn btn-meal" onclick="generateMeal()">✦ Generate My Diet Plan</button>
+  </div>
+
+  <div class="response-box" id="meal-response">
+    <div class="response-label"><div class="dot dot-meal"></div> AI Diet Plan</div>
+    <div id="meal-response-text"></div>
+  </div>
 </div>
 
-/* skin*/
-
-<div class="card" id="skin">
-  <h3>✨ Skin Tracker</h3>
-  <label>Skin Type</label>
-  <div class="chips" id="st">
-    <div class="chip" onclick="solo(this,'st')">Normal</div>
-    <div class="chip" onclick="solo(this,'st')">Oily</div>
-    <div class="chip" onclick="solo(this,'st')">Dry</div>
-    <div class="chip" onclick="solo(this,'st')">Combination</div>
-    <div class="chip" onclick="solo(this,'st')">Sensitive</div>
+<!-- KITCHEN CHEMISTRY -->
+<div id="kitchen" class="section">
+  <div class="section-header">
+    <div class="section-label kitchen">02 — Kitchen Science</div>
+    <h2>Kitchen Chemistry 🧪</h2>
+    <p>Solve health problems using common kitchen ingredients — nature's pharmacy, explained simply.</p>
   </div>
 
-  <label>Conditions (multi)</label>
-  <div class="chips" id="sc">
-    <div class="chip" onclick="toggle(this)">Acne</div>
-    <div class="chip" onclick="toggle(this)">Redness</div>
-    <div class="chip" onclick="toggle(this)">Dark Spots</div>
-    <div class="chip" onclick="toggle(this)">Dullness</div>
-    <div class="chip" onclick="toggle(this)">Dryness</div>
-    <div class="chip" onclick="toggle(this)">Fine Lines</div>
-  </div>
-
-  <button class="btn b" onclick="doSkin()">Get Routine</button>
-  <div class="out out-b" id="skin-out"></div>
-</div>
-
-/* medical */
-
-<div class="card" id="medical">
-  <h3>🩺 Medical Trigger</h3>
-  <label>Symptoms (multi)</label>
-  <div class="chips" id="ms">
-    <div class="chip" onclick="toggle(this)">Fever</div>
-    <div class="chip" onclick="toggle(this)">Headache</div>
-    <div class="chip" onclick="toggle(this)">Chest Pain</div>
-    <div class="chip" onclick="toggle(this)">Breathlessness</div>
-    <div class="chip" onclick="toggle(this)">Nausea</div>
-    <div class="chip" onclick="toggle(this)">Fatigue</div>
-    <div class="chip" onclick="toggle(this)">Rash</div>
-    <div class="chip" onclick="toggle(this)">Dizziness</div>
-  </div>
-
-  <div class="grid">
-    <div>
-      <label>Duration</label>
-      <select id="md2">
-        <option value="1">Few hours</option>
-        <option value="2">1–2 days</option>
-        <option value="3">3–7 days</option>
-        <option value="4">1–2 weeks</option>
-        <option value="5">Over 2 weeks</option>
-      </select>
+  <div class="card">
+    <div class="card-title">🔍 Describe Your Problem</div>
+    <div class="form-grid">
+      <div class="form-group form-full">
+        <label>What problem are you dealing with?</label>
+        <div class="tag-group">
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">🤒 Cold & Flu</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">🤢 Nausea</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">😴 Insomnia</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">💩 Digestion Issues</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">🤕 Headache</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">😮‍💨 Bloating</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">💪 Muscle Soreness</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">🧠 Brain Fog</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">😰 Stress & Anxiety</span>
+          <span class="tag" onclick="selectTag(this,'kitchen-problem','selected-kitchen')">🔥 Acidity</span>
+        </div>
+        <input type="hidden" id="kitchen-problem">
+      </div>
+      <div class="form-group form-full">
+        <label>Describe your symptoms in more detail (optional)</label>
+        <textarea id="kitchen-detail" placeholder="e.g. I've had a sore throat and mild fever since yesterday evening..."></textarea>
+      </div>
+      <div class="form-group form-full">
+        <label>What ingredients do you have available?</label>
+        <div class="tag-group">
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🧄 Garlic</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🫚 Ginger</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🍋 Lemon</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🍯 Honey</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🥛 Milk</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🌿 Turmeric</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🫒 Olive Oil</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🌶️ Pepper</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🍵 Green Tea</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🧂 Salt</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🍎 Apple Cider Vinegar</span>
+          <span class="tag" onclick="toggleTag(this,'kitchen-ingredients','selected-kitchen')">🌱 Mint</span>
+        </div>
+        <input type="hidden" id="kitchen-ingredients" value="">
+      </div>
     </div>
-
-    <div>
-      <label>Severity: <span id="sv">5</span>/10</label>
-      <input type="range" min="1" max="10" value="5" oninput="document.getElementById('sv').textContent=this.value" id="sev" style="margin-top:12px;accent-color:#b03030;padding:0"/></div>
+    <button class="btn btn-kitchen" onclick="generateKitchen()">✦ Find Kitchen Remedy</button>
   </div>
 
-  <button class="btn r" onclick="doMedical()">Analyse</button>
-  <div class="out out-r" id="med-out"></div>
-
+  <div class="response-box" id="kitchen-response">
+    <div class="response-label"><div class="dot dot-kitchen"></div> AI Kitchen Remedy</div>
+    <div id="kitchen-response-text"></div>
+  </div>
+  <div class="disclaimer">⚠️ Kitchen remedies are complementary suggestions only. For serious or persistent symptoms, consult a healthcare professional.</div>
 </div>
 
-</main>
+<!-- SKIN TRACKER -->
+<div id="skin" class="section">
+  <div class="section-header">
+    <div class="section-label skin">03 — Dermatology</div>
+    <h2>Skin Tracker ✨</h2>
+    <p>Get personalized skincare solutions based on your skin type, concerns, and current routine.</p>
+  </div>
 
+  <div class="card">
+    <div class="card-title">🌿 Your Skin Profile</div>
+    <div class="form-grid">
+      <div class="form-group form-full">
+        <label>Skin Type</label>
+        <div class="tag-group">
+          <span class="tag" onclick="selectTag(this,'skin-type','selected-skin')">💧 Oily</span>
+          <span class="tag" onclick="selectTag(this,'skin-type','selected-skin')">🌵 Dry</span>
+          <span class="tag" onclick="selectTag(this,'skin-type','selected-skin')">⚖️ Combination</span>
+          <span class="tag" onclick="selectTag(this,'skin-type','selected-skin')">🌸 Sensitive</span>
+          <span class="tag" onclick="selectTag(this,'skin-type','selected-skin')">✅ Normal</span>
+        </div>
+        <input type="hidden" id="skin-type">
+      </div>
+      <div class="form-group form-full">
+        <label>Main Skin Concerns</label>
+        <div class="tag-group">
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">🔴 Acne</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">⚫ Dark Spots</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">🕳️ Large Pores</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">🌊 Wrinkles</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">🌑 Dark Circles</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">🔆 Dullness</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">🌡️ Redness</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">💀 Dryness & Flaking</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">☀️ Sun Damage</span>
+          <span class="tag" onclick="toggleTag(this,'skin-concerns','selected-skin')">🧬 Uneven Texture</span>
+        </div>
+        <input type="hidden" id="skin-concerns" value="">
+      </div>
+      <div class="form-group">
+        <label>Age Range</label>
+        <select id="skin-age">
+          <option value="">Select</option>
+          <option>Under 18</option>
+          <option>18–25</option>
+          <option>26–35</option>
+          <option>36–45</option>
+          <option>46+</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Climate / Environment</label>
+        <select id="skin-climate">
+          <option value="">Select</option>
+          <option>Hot & Humid</option>
+          <option>Hot & Dry</option>
+          <option>Cold & Dry</option>
+          <option>Temperate</option>
+          <option>Coastal</option>
+        </select>
+      </div>
+      <div class="form-group form-full">
+        <label>Current Routine (optional)</label>
+        <textarea id="skin-routine" placeholder="e.g. I use a face wash and moisturizer morning and night, no serum..."></textarea>
+      </div>
+      <div class="form-group form-full">
+        <label>Budget Preference</label>
+        <div class="tag-group">
+          <span class="tag" onclick="selectTag(this,'skin-budget','selected-skin')">💸 Budget Friendly</span>
+          <span class="tag" onclick="selectTag(this,'skin-budget','selected-skin')">💰 Mid-Range</span>
+          <span class="tag" onclick="selectTag(this,'skin-budget','selected-skin')">👑 Premium</span>
+          <span class="tag" onclick="selectTag(this,'skin-budget','selected-skin')">🌿 Natural/DIY</span>
+        </div>
+        <input type="hidden" id="skin-budget">
+      </div>
+    </div>
+    <button class="btn btn-skin" onclick="generateSkin()">✦ Analyze My Skin</button>
+  </div>
+
+  <div class="response-box" id="skin-response">
+    <div class="response-label"><div class="dot dot-skin"></div> AI Skin Analysis</div>
+    <div id="skin-response-text"></div>
+  </div>
+</div>
+
+<!-- MEDICAL TRIGGER -->
+<div id="medical" class="section">
+  <div class="section-header">
+    <div class="section-label medical">04 — Health Guidance</div>
+    <h2>Medical Trigger 🩺</h2>
+    <p>Describe your symptoms and get guidance on whether you need professional care, what type of specialist to see, and what to expect.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏥 Symptom Checker</div>
+    <div class="form-grid">
+      <div class="form-group form-full">
+        <label>Primary Symptom Area</label>
+        <div class="tag-group">
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">🧠 Head & Brain</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">❤️ Heart & Chest</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">🫁 Breathing</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">🤢 Stomach & Gut</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">🦴 Bones & Joints</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">🧬 Skin Issues</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">😔 Mental Health</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">👁️ Eyes & Vision</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">👂 Ears & Hearing</span>
+          <span class="tag" onclick="selectTag(this,'med-area','selected-medical')">🦷 Dental</span>
+        </div>
+        <input type="hidden" id="med-area">
+      </div>
+      <div class="form-group form-full">
+        <label>Describe Your Symptoms</label>
+        <textarea id="med-symptoms" placeholder="Describe what you're experiencing in detail — when it started, how it feels, what makes it better or worse..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Symptom Duration</label>
+        <select id="med-duration">
+          <option value="">Select</option>
+          <option>Less than 24 hours</option>
+          <option>1–3 days</option>
+          <option>4–7 days</option>
+          <option>1–2 weeks</option>
+          <option>More than 2 weeks</option>
+          <option>Recurring / Chronic</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Severity (1 = mild, 10 = severe)</label>
+        <input type="number" id="med-severity" placeholder="e.g. 6" min="1" max="10">
+      </div>
+      <div class="form-group form-full">
+        <label>Any other relevant info?</label>
+        <input type="text" id="med-extra" placeholder="e.g. recent travel, allergies, medications, pre-existing conditions...">
+      </div>
+    </div>
+    <button class="btn btn-medical" onclick="generateMedical()">✦ Check My Symptoms</button>
+  </div>
+
+  <div class="response-box" id="medical-response">
+    <div class="response-label"><div class="dot dot-medical"></div> AI Medical Guidance</div>
+    <div id="medical-response-text"></div>
+  </div>
+  <div class="disclaimer">⚠️ This tool provides general guidance only and is NOT a substitute for professional medical advice, diagnosis, or treatment. In emergencies, call your local emergency number immediately.</div>
+</div>
+
+<script>
+// ---- SECTION NAVIGATION ----
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.section === id);
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ---- TAG SELECTION (single) ----
+function selectTag(el, hiddenId, cls) {
+  const container = el.closest('.form-group, .card');
+  container.querySelectorAll('.tag').forEach(t => {
+    ['selected-meal','selected-kitchen','selected-skin','selected-medical'].forEach(c => t.classList.remove(c));
+  });
+  el.classList.add(cls);
+  document.getElementById(hiddenId).value = el.textContent.trim().replace(/^[^\w]+/, '').trim();
+}
+
+// ---- TAG TOGGLE (multi) ----
+function toggleTag(el, hiddenId, cls) {
+  el.classList.toggle(cls);
+  const container = el.closest('.form-group, .card');
+  const selected = [...container.querySelectorAll('.tag.' + cls)].map(t => t.textContent.trim().replace(/^[^\w\u{1F300}-\u{1FFFF}]+/u,'').trim());
+  document.getElementById(hiddenId).value = selected.join(', ');
+}
+
+// ---- CLAUDE API CALL ----
+async function callClaude(prompt, responseId, textId, dotClass) {
+  const box = document.getElementById(responseId);
+  const textEl = document.getElementById(textId);
+  box.classList.add('visible');
+  textEl.innerHTML = `<div class="loading-dots"><span></span><span></span><span></span></div> Thinking...`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.map(b => b.text || '').join('') || 'No response received.';
+    textEl.innerHTML = formatResponse(text);
+  } catch (e) {
+    textEl.innerHTML = '⚠️ Error connecting to AI. Please try again.';
+  }
+}
+
+function formatResponse(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/^### (.+)$/gm, '<br><strong style="font-size:1rem;font-family:Syne,sans-serif">$1</strong><br>')
+    .replace(/^## (.+)$/gm, '<br><strong style="font-size:1.1rem;font-family:Syne,sans-serif">$1</strong><br>')
+    .replace(/^# (.+)$/gm, '<br><strong style="font-size:1.2rem;font-family:Syne,sans-serif">$1</strong><br>')
+    .replace(/^[•\-] (.+)$/gm, '&nbsp;&nbsp;• $1')
+    .replace(/\n/g, '<br>');
+}
+
+// ---- MEAL GENERATOR ----
+function generateMeal() {
+  const age = document.getElementById('meal-age').value;
+  const gender = document.getElementById('meal-gender').value;
+  const weight = document.getElementById('meal-weight').value;
+  const height = document.getElementById('meal-height').value;
+  const goal = document.getElementById('meal-goal').value;
+  const activity = document.getElementById('meal-activity').value;
+  const restrictions = document.getElementById('meal-restrictions').value;
+
+  if (!goal) { alert('Please select a goal!'); return; }
+
+  const prompt = `You are a certified nutritionist. Create a detailed personalized diet plan for:
+- Age: ${age || 'not specified'}, Gender: ${gender || 'not specified'}
+- Weight: ${weight || '?'} kg, Height: ${height || '?'} cm
+- Goal: ${goal}
+- Activity Level: ${activity || 'moderate'}
+- Dietary Restrictions: ${restrictions || 'none'}
+
+Provide:
+1. Daily calorie target and macros (protein, carbs, fats)
+2. A sample full day meal plan (breakfast, lunch, dinner, snacks) with portion sizes
+3. Top 5 foods to prioritize for this goal
+4. Foods to avoid
+5. One practical tip specific to this goal
+
+Keep it practical, student-friendly, and achievable on a budget. Format clearly with section headers.`;
+
+  callClaude(prompt, 'meal-response', 'meal-response-text', 'dot-meal');
+}
+
+// ---- KITCHEN CHEMISTRY ----
+function generateKitchen() {
+  const problem = document.getElementById('kitchen-problem').value;
+  const detail = document.getElementById('kitchen-detail').value;
+  const ingredients = document.getElementById('kitchen-ingredients').value;
+
+  if (!problem) { alert('Please select a problem!'); return; }
+
+  const prompt = `You are a natural health expert and kitchen remedy specialist. 
+Problem: ${problem}
+Additional detail: ${detail || 'none'}
+Available ingredients: ${ingredients || 'common kitchen items'}
+
+Provide:
+1. Best 2-3 kitchen remedies using the available ingredients
+2. Step-by-step preparation for each remedy
+3. How often to use it and for how long
+4. The science/reason why this works
+5. When to STOP and see a doctor instead
+
+Be practical, clear, and student-friendly. Add a gentle safety note.`;
+
+  callClaude(prompt, 'kitchen-response', 'kitchen-response-text', 'dot-kitchen');
+}
+
+// ---- SKIN TRACKER ----
+function generateSkin() {
+  const type = document.getElementById('skin-type').value;
+  const concerns = document.getElementById('skin-concerns').value;
+  const age = document.getElementById('skin-age').value;
+  const climate = document.getElementById('skin-climate').value;
+  const routine = document.getElementById('skin-routine').value;
+  const budget = document.getElementById('skin-budget').value;
+
+  if (!type) { alert('Please select your skin type!'); return; }
+
+  const prompt = `You are an expert dermatologist and skincare consultant.
+Skin type: ${type}
+Skin concerns: ${concerns || 'general maintenance'}
+Age range: ${age || 'young adult'}
+Climate: ${climate || 'temperate'}
+Current routine: ${routine || 'minimal or none'}
+Budget: ${budget || 'mid-range'}
+
+Provide:
+1. Analysis of why these concerns occur for this skin type
+2. A complete AM and PM skincare routine (step-by-step with product types and ingredients to look for)
+3. Top 3 specific ingredients to target the main concern
+4. Ingredients to avoid for this skin type
+5. One DIY/natural tip they can do tonight
+6. Lifestyle habits (water, sleep, diet) that impact this skin type
+
+Be specific, practical, and budget-conscious. Mention affordable ingredient names, not just luxury brands.`;
+
+  callClaude(prompt, 'skin-response', 'skin-response-text', 'dot-skin');
+}
+
+// ---- MEDICAL TRIGGER ----
+function generateMedical() {
+  const area = document.getElementById('med-area').value;
+  const symptoms = document.getElementById('med-symptoms').value;
+  const duration = document.getElementById('med-duration').value;
+  const severity = document.getElementById('med-severity').value;
+  const extra = document.getElementById('med-extra').value;
+
+  if (!symptoms.trim()) { alert('Please describe your symptoms!'); return; }
+
+  const prompt = `You are a knowledgeable medical triage assistant (not a doctor).
+Symptom area: ${area || 'general'}
+Symptoms: ${symptoms}
+Duration: ${duration || 'unknown'}
+Severity: ${severity || '?'}/10
+Other info: ${extra || 'none'}
+
+Provide a structured response:
+1. **Urgency Level**: Is this an EMERGENCY (go now), URGENT (see doctor today/this week), or ROUTINE (can wait, monitor)?
+2. **Possible Causes**: 2-4 common explanations for these symptoms (not a diagnosis)
+3. **What Type of Doctor to See**: Specialist name and why
+4. **What to Tell the Doctor**: Key details to mention during your appointment
+5. **What to Do Right Now**: Self-care or monitoring steps before/while waiting for care
+6. **Red Flag Signs**: Specific symptoms that mean go to ER immediately
+
+Be clear, calm, and responsible. Always remind them this is not a medical diagnosis.`;
+
+  callClaude(prompt, 'medical-response', 'medical-response-text', 'dot-medical');
+}
+
+// init nav
+document.querySelector('.nav-pill[data-section="home"]').classList.add('active');
+</script>
 </body>
 </html>
-
